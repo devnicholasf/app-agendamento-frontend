@@ -21,10 +21,10 @@ import Settings from "./pages/Settings";
 import Notifications from "./pages/Notifications";
 import AdminDashboard from "./pages/AdminDashboard";
 
-// 🔐 Componentes de autenticação
-import Login from "./components/Login";
-import Register from "./components/Register";
-import ForgotPassword from "./components/ForgotPassword";
+// 🔐 Tela de autenticação (migradas para `pages` por boas práticas)
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
 
 export default function App() {
   const [user, setUser] = useState(null);

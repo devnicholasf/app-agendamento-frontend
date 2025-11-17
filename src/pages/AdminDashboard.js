@@ -11,7 +11,6 @@ import {
   Shield,
   Loader2,
   AlertTriangle,
-  Building2,
   Settings,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -25,14 +24,23 @@ export default function AdminDashboard() {
   const [appointments, setAppointments] = useState([]);
   const [notifications, setNotifications] = useState([]);
 
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [activeTab, setActiveTab] = useState("dashboard"); // dashboard | users | appointments | notifications | settings
+
   const [loading, setLoading] = useState(true);
   const [accessDenied, setAccessDenied] = useState(false);
 
   const navigate = useNavigate();
 
+  // helper: pega idToken atual
+  async function getAuthHeader() {
+    const user = auth.currentUser;
+    if (!user) return {};
+    const token = await user.getIdToken();
+    return { Authorization: `Bearer ${token}` };
+  }
+
   /* ====================================================================== */
-  /* 🔐 Autenticação + Verificação de ADMIN + Token                         */
+  /* 🔐 Autenticação + Verificação de ADMIN                                 */
   /* ====================================================================== */
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -42,26 +50,20 @@ export default function AdminDashboard() {
       }
 
       try {
-        // 🔥 pega idToken
-        const idToken = await user.getIdToken();
-        const config = { headers: { Authorization: `Bearer ${idToken}` } };
-
-        // 🔍 verifica role no backend
-        const res = await axios.get(
-          `http://localhost:5000/api/users/${user.uid}`,
-          config
-        );
-
-        if (res.data.userRole !== "admin") {
+        // busca o papel (role) diretamente do backend (rota pública /api/users/:id)
+        const resUser = await axios.get(`http://localhost:5000/api/users/${user.uid}`);
+        if (resUser.data.userRole !== "admin") {
           setAccessDenied(true);
           setLoading(false);
           return;
         }
 
-        // 🔥 carrega painel
-        loadDashboardData(config);
+        // carrega o painel (overview)
+        await loadDashboardData();
       } catch (err) {
         console.error("Erro ao validar admin:", err);
+        setAccessDenied(true);
+        setLoading(false);
       }
     });
 
@@ -71,13 +73,11 @@ export default function AdminDashboard() {
   /* ====================================================================== */
   /* 📌 Carregar dados da aba DASHBOARD                                     */
   /* ====================================================================== */
-  async function loadDashboardData(config) {
+  async function loadDashboardData() {
     try {
-      const res = await axios.get(
-        "http://localhost:5000/api/admin/overview",
-        config
-      );
-      setOverview(res.data);
+      const headers = await getAuthHeader();
+      const stats = await axios.get("http://localhost:5000/api/admin/overview", { headers });
+      setOverview(stats.data);
     } catch (err) {
       console.error("Erro ao obter overview:", err);
     } finally {
@@ -90,14 +90,8 @@ export default function AdminDashboard() {
   /* ====================================================================== */
   async function loadUsers() {
     try {
-      const user = auth.currentUser;
-      const token = await user.getIdToken();
-      const config = { headers: { Authorization: `Bearer ${token}` } };
-
-      const res = await axios.get(
-        "http://localhost:5000/api/admin/users",
-        config
-      );
+      const headers = await getAuthHeader();
+      const res = await axios.get("http://localhost:5000/api/admin/users", { headers });
       setUsers(res.data);
     } catch (err) {
       console.error("Erro ao carregar usuários:", err);
@@ -109,14 +103,8 @@ export default function AdminDashboard() {
   /* ====================================================================== */
   async function loadAppointments() {
     try {
-      const user = auth.currentUser;
-      const token = await user.getIdToken();
-      const config = { headers: { Authorization: `Bearer ${token}` } };
-
-      const res = await axios.get(
-        "http://localhost:5000/api/admin/appointments",
-        config
-      );
+      const headers = await getAuthHeader();
+      const res = await axios.get("http://localhost:5000/api/admin/appointments", { headers });
       setAppointments(res.data);
     } catch (err) {
       console.error("Erro ao carregar agendamentos:", err);
@@ -128,14 +116,8 @@ export default function AdminDashboard() {
   /* ====================================================================== */
   async function loadNotifications() {
     try {
-      const user = auth.currentUser;
-      const token = await user.getIdToken();
-      const config = { headers: { Authorization: `Bearer ${token}` } };
-
-      const res = await axios.get(
-        "http://localhost:5000/api/admin/notifications",
-        config
-      );
+      const headers = await getAuthHeader();
+      const res = await axios.get("http://localhost:5000/api/admin/notifications", { headers });
       setNotifications(res.data);
     } catch (err) {
       console.error("Erro ao carregar notificações:", err);
@@ -143,39 +125,16 @@ export default function AdminDashboard() {
   }
 
   /* ====================================================================== */
-  /* 🟪 Alterar ABA                                                         */
+  /* 🟪 Alterar ABA (carrega conteúdo dinamicamente)                        */
   /* ====================================================================== */
   async function handleTabChange(tab) {
     setActiveTab(tab);
 
-    if (tab === "users") loadUsers();
-    if (tab === "appointments") loadAppointments();
-    if (tab === "notifications") loadNotifications();
+    if (tab === "users") await loadUsers();
+    if (tab === "appointments") await loadAppointments();
+    if (tab === "notifications") await loadNotifications();
   }
 
-  /* ====================================================================== */
-  /* 👤 Alterar Role                                                        */
-  /* ====================================================================== */
-  async function updateUserRole(id, newRole) {
-    try {
-      const user = auth.currentUser;
-      const token = await user.getIdToken();
-      const config = { headers: { Authorization: `Bearer ${token}` } };
-
-      await axios.patch(
-        `http://localhost:5000/api/admin/users/${id}/role`,
-        { role: newRole },
-        config
-      );
-
-      loadUsers();
-      alert("Papel atualizado com sucesso!");
-    } catch (err) {
-      console.error("Erro ao atualizar role:", err);
-      alert("Erro ao atualizar role.");
-    }
-  }
-  
   /* ====================================================================== */
   /* 🚪 Logout                                                              */
   /* ====================================================================== */
@@ -219,38 +178,36 @@ export default function AdminDashboard() {
   function DashboardTab() {
     return (
       <>
-        {/* Cards de resumo */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
           <StatCard
             icon={Users}
             title="Usuários cadastrados"
-            value={overview.usersCount}
+            value={overview?.usersCount}
             color="from-blue-400 to-blue-600"
           />
           <StatCard
             icon={Calendar}
             title="Agendamentos"
-            value={overview.appointmentsCount}
+            value={overview?.appointmentsCount}
             color="from-green-400 to-green-600"
           />
           <StatCard
             icon={Bell}
             title="Notificações enviadas"
-            value={overview.notificationsCount}
+            value={overview?.notificationsCount}
             color="from-purple-400 to-purple-600"
           />
         </div>
 
-        {/* Listas */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <ListSection
             title="Últimos Usuários"
-            data={overview.recentUsers}
+            data={overview?.recentUsers}
             empty="Nenhum usuário encontrado."
           />
           <ListSection
             title="Últimos Agendamentos"
-            data={overview.recentAppointments}
+            data={overview?.recentAppointments}
             empty="Nenhum agendamento recente."
           />
         </div>
@@ -261,12 +218,11 @@ export default function AdminDashboard() {
   /* ====================================================================== */
   /* 👥 TAB USUÁRIOS – PROMOVER ROLES                                      */
   /* ====================================================================== */
-  async function updateUserRole(id, newRole) {
+  async function updateUserRole(id, newRole, companyId = null) {
     try {
-      await axios.patch(`http://localhost:5000/api/admin/users/${id}/role`, {
-        role: newRole,
-      });
-      loadUsers();
+      const headers = await getAuthHeader();
+      await axios.patch(`http://localhost:5000/api/admin/users/${id}/role`, { role: newRole, companyId }, { headers });
+      await loadUsers();
       alert("Papel atualizado com sucesso!");
     } catch (err) {
       console.error("Erro ao atualizar role:", err);
@@ -299,7 +255,7 @@ export default function AdminDashboard() {
                   <select
                     className="border rounded px-2 py-1"
                     value={u.userRole}
-                    onChange={(e) => updateUserRole(u.id, e.target.value)}
+                    onChange={(e) => updateUserRole(u.id, e.target.value, u.companyId || null)}
                   >
                     <option value="cliente">Cliente</option>
                     <option value="profissional">Profissional</option>
@@ -369,7 +325,7 @@ export default function AdminDashboard() {
             {notifications.map((n) => (
               <li key={n.id} className="py-2">
                 <p>{n.title}</p>
-                <p className="text-sm text-gray-500">{n.body}</p>
+                <p className="text-sm text-gray-500">{n.message || n.body}</p>
               </li>
             ))}
           </ul>
