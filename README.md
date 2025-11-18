@@ -1,43 +1,42 @@
-# App Agendamento - Frontend
+# 🛠️ App Agendamento - Frontend
 
 <p align="center">
   <!-- Status -->
-<img src="https://img.shields.io/badge/status-em%20desenvolvimento-yellow?style=for-the-badge" alt="Status: Em Desenvolvimento" />
+  <img src="https://img.shields.io/badge/status-em%20desenvolvimento-yellow?style=for-the-badge" />
 
   <!-- React -->
-<img src="https://img.shields.io/badge/React-18.0.0-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="React" />
+  <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black" />
 
   <!-- Firebase -->
-<img src="https://img.shields.io/badge/Firebase-9.0-FFCA28?style=for-the-badge&logo=firebase&logoColor=white" alt="Firebase" />
+  <img src="https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=000000" />
 
-  <!-- Tailwind -->
-<img src="https://img.shields.io/badge/TailwindCSS-3.0-38BDF8?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
-
+  <!-- TailwindCSS -->
+  <img src="https://img.shields.io/badge/TailwindCSS-8B5CF6?style=for-the-badge&logo=tailwind-css&logoColor=white" />
 </p>
 
 
 ## Sobre o Projeto
-Este é o frontend do sistema de agendamento, desenvolvido em React. Ele fornece uma interface amigável para usuários, profissionais e administradores gerenciarem agendamentos e serviços.
+Este é o frontend do sistema de agendamento, desenvolvido em React. Ele oferece uma interface moderna e intuitiva para que usuários, profissionais e administradores possam gerenciar agendamentos, visualizar serviços e interagir com o sistema de forma prática.
 
-⚠️ **Status do Projeto**: Em andamento.
 
-## Tecnologias Utilizadas
+
+## 🚀 Tecnologias Utilizadas
 - **React**: Biblioteca para construção de interfaces.
 - **Firebase**: Autenticação e Firestore para persistência de dados.
 - **Tailwind CSS**: Framework para estilização.
 
-## Estrutura do Projeto
+## 📁 Estrutura do Projeto
 - **`src/pages/`**: Contém as páginas principais (ex.: `Login`, `Home`, `Appointments`).
 - **`src/components/`**: Componentes reutilizáveis (ex.: `ProfilePictureUpload`).
 - **`src/hooks/`**: Hooks customizados (ex.: `useUserData`).
 - **`src/utils/`**: Scripts utilitários (ex.: `serviceWorkerRegistration.js`).
 
-## Como Rodar o Projeto
+## ▶️ Como Rodar o Projeto
 
 ### Pré-requisitos
 - Node.js instalado.
 
-### Passos
+###  📌 Passos
 1. Clone o repositório:
    ```bash
    git clone https://github.com/devnicholasf/app-agendamento-frontend
@@ -51,14 +50,12 @@ Este é o frontend do sistema de agendamento, desenvolvido em React. Ele fornece
    npm start
    ```
 
-## Funcionalidades Principais
+## 💡 Funcionalidades Principais
 - **Login e Registro**: Autenticação de usuários via Firebase.
 - **Agendamentos**: Visualização e gerenciamento de horários disponíveis.
 - **Notificações**: Exibição de notificações importantes para os usuários.
 
-## Contribuição
-Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou enviar pull requests.
-
 ---
+## 👨‍💻 Autor
 
 Desenvolvido por Nicholas.
