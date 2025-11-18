@@ -1,4 +1,4 @@
-// src/serviceWorkerRegistration.js
+// src/utils/serviceWorkerRegistration.js
 
 // Este arquivo registra o Service Worker para o app funcionar offline e ser PWA
 
