@@ -1,5 +1,21 @@
 # App Agendamento - Frontend
 
+<p align="center">
+  <!-- Status -->
+<img src="https://img.shields.io/badge/status-em%20desenvolvimento-yellow?style=for-the-badge" alt="Status: Em Desenvolvimento" />
+
+  <!-- React -->
+<img src="https://img.shields.io/badge/React-18.0.0-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="React" />
+
+  <!-- Firebase -->
+<img src="https://img.shields.io/badge/Firebase-9.0-FFCA28?style=for-the-badge&logo=firebase&logoColor=white" alt="Firebase" />
+
+  <!-- Tailwind -->
+<img src="https://img.shields.io/badge/TailwindCSS-3.0-38BDF8?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+
+</p>
+
+
 ## Sobre o Projeto
 Este é o frontend do sistema de agendamento, desenvolvido em React. Ele fornece uma interface amigável para usuários, profissionais e administradores gerenciarem agendamentos e serviços.
 
